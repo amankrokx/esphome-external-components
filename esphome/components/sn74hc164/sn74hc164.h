@@ -32,5 +32,18 @@ class SN74HC164Component : public Component {
   std::bitset<8> current_state_;
 };
 
+class SN74HC164BinaryOutput : public esphome::output::BinaryOutput {
+ public:
+  SN74HC164BinaryOutput(SN74HC164Component *parent, uint8_t pin) : parent_(parent), pin_(pin) {}
+
+  void write_state(bool state) override {
+    this->parent_->set_output_state(this->pin_, state);
+  }
+
+ private:
+  SN74HC164Component *parent_;
+  uint8_t pin_;
+};
+
 }  // namespace sn74hc164
 }  // namespace esphome
