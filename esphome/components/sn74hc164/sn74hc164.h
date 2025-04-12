@@ -7,6 +7,7 @@
 #include "esphome/components/output/binary_output.h"
 
 #include <vector>
+#include <bitset>
 
 namespace esphome {
 namespace sn74hc164 {
@@ -23,27 +24,12 @@ class SN74HC164Component : public Component {
   void set_clock_pin(GPIOPin *pin) { this->clock_pin_ = pin; }
 
   void shift_out(uint8_t value);
-
   void set_output_state(uint8_t pin, bool state);
 
-  SN74HC164Pin *get_pin(uint8_t pin) {
-    return new SN74HC164Pin(this, pin);
-  }
-
- protected:
+ private:
   GPIOPin *data_pin_;
   GPIOPin *clock_pin_;
-};
-
-class SN74HC164Pin : public esphome::output::BinaryOutput {
- public:
-  SN74HC164Pin(SN74HC164Component *parent, uint8_t pin) : parent_(parent), pin_(pin) {}
-
-  void write_state(bool state) override;
-
- protected:
-  SN74HC164Component *parent_;
-  uint8_t pin_;
+  std::bitset<8> current_state_;
 };
 
 }  // namespace sn74hc164

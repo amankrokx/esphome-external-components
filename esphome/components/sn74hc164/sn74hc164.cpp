@@ -1,5 +1,6 @@
 #include "sn74hc164.h"
 #include "esphome/core/log.h"
+#include <bitset>
 
 namespace esphome {
 namespace sn74hc164 {
@@ -32,13 +33,12 @@ void SN74HC164Component::shift_out(uint8_t value) {
 }
 
 void SN74HC164Component::set_output_state(uint8_t pin, bool state) {
-  static uint8_t current_state = 0;
-  if (state) {
-    current_state |= (1 << pin);
-  } else {
-    current_state &= ~(1 << pin);
+  if (pin >= 8) {
+    ESP_LOGE(TAG, "Invalid pin: %d", pin);
+    return;
   }
-  this->shift_out(current_state);
+  this->current_state_[pin] = state;
+  this->shift_out(static_cast<uint8_t>(this->current_state_.to_ulong()));
 }
 
 void SN74HC164Pin::write_state(bool state) {
