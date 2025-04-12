@@ -1,0 +1,26 @@
+esphome:
+  name: sn74hc164_example
+  platform: ESP32
+  board: esp32dev
+
+external_components:
+  - source:
+      type: local
+      path: esphome/components/sn74hc164
+
+# Define the SN74HC164 component
+sn74hc164:
+  - id: my_shift_register
+    data_pin: GPIO23
+    clock_pin: GPIO22
+
+# Example usage: controlling LEDs
+output:
+  - platform: ledc
+    id: led_output
+    pin: GPIO25
+
+light:
+  - platform: binary
+    name: "SN74HC164 LED"
+    output: led_output
