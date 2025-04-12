@@ -17,6 +17,7 @@ class SN74HC164Component : public Component {
   SN74HC164Component() = default;
 
   void setup() override;
+  void loop() override;
   float get_setup_priority() const override;
   void dump_config() override;
 
