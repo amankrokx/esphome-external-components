@@ -31,5 +31,25 @@ void SN74HC164Component::shift_out(uint8_t value) {
   }
 }
 
+void SN74HC164Component::set_output_state(uint8_t pin, bool state) {
+  static uint8_t current_state = 0;
+  if (state) {
+    current_state |= (1 << pin);
+  } else {
+    current_state &= ~(1 << pin);
+  }
+  this->shift_out(current_state);
+}
+
+void SN74HC164Pin::write_state(bool state) {
+  uint8_t current_state = this->parent_->get_current_state();
+  if (state) {
+    current_state |= (1 << this->pin_);
+  } else {
+    current_state &= ~(1 << this->pin_);
+  }
+  this->parent_->shift_out(current_state);
+}
+
 }  // namespace sn74hc164
 }  // namespace esphome

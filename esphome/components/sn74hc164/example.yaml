@@ -11,16 +11,59 @@ external_components:
 # Define the SN74HC164 component
 sn74hc164:
   - id: my_shift_register
-    data_pin: GPIO23
-    clock_pin: GPIO22
+    data_pin: GPIO16
+    clock_pin: GPIO04
 
-# Example usage: controlling LEDs
-output:
-  - platform: ledc
-    id: led_output
-    pin: GPIO25
-
+# Define 8 lights connected to the SN74HC164 outputs
 light:
   - platform: binary
-    name: "SN74HC164 LED"
-    output: led_output
+    name: "SN74HC164 Light 1"
+    output: sn74hc164_output_1
+  - platform: binary
+    name: "SN74HC164 Light 2"
+    output: sn74hc164_output_2
+  - platform: binary
+    name: "SN74HC164 Light 3"
+    output: sn74hc164_output_3
+  - platform: binary
+    name: "SN74HC164 Light 4"
+    output: sn74hc164_output_4
+  - platform: binary
+    name: "SN74HC164 Light 5"
+    output: sn74hc164_output_5
+  - platform: binary
+    name: "SN74HC164 Light 6"
+    output: sn74hc164_output_6
+  - platform: binary
+    name: "SN74HC164 Light 7"
+    output: sn74hc164_output_7
+  - platform: binary
+    name: "SN74HC164 Light 8"
+    output: sn74hc164_output_8
+
+# Example usage: controlling individual outputs
+output:
+  - platform: custom
+    type: binary
+    lambda: |-
+      auto sn74hc164 = id(my_shift_register);
+      return {
+        [sn74hc164](bool state) { sn74hc164->set_output_state(0, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(1, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(2, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(3, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(4, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(5, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(6, state); },
+        [sn74hc164](bool state) { sn74hc164->set_output_state(7, state); },
+      };
+    outputs:
+      - id: sn74hc164_output_1
+      - id: sn74hc164_output_2
+      - id: sn74hc164_output_3
+      - id: sn74hc164_output_4
+      - id: sn74hc164_output_5
+      - id: sn74hc164_output_6
+      - id: sn74hc164_output_7
+      - id: sn74hc164_output_8
+

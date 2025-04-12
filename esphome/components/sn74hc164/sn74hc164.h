@@ -4,6 +4,7 @@
 #include "esphome/core/defines.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/helpers.h"
+#include "esphome/components/output/binary_output.h"
 
 #include <vector>
 
@@ -23,9 +24,26 @@ class SN74HC164Component : public Component {
 
   void shift_out(uint8_t value);
 
+  void set_output_state(uint8_t pin, bool state);
+
+  SN74HC164Pin *get_pin(uint8_t pin) {
+    return new SN74HC164Pin(this, pin);
+  }
+
  protected:
   GPIOPin *data_pin_;
   GPIOPin *clock_pin_;
+};
+
+class SN74HC164Pin : public esphome::output::BinaryOutput {
+ public:
+  SN74HC164Pin(SN74HC164Component *parent, uint8_t pin) : parent_(parent), pin_(pin) {}
+
+  void write_state(bool state) override;
+
+ protected:
+  SN74HC164Component *parent_;
+  uint8_t pin_;
 };
 
 }  // namespace sn74hc164
