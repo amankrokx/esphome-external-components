@@ -41,5 +41,10 @@ void SN74HC164Component::set_output_state(uint8_t pin, bool state) {
   this->shift_out(static_cast<uint8_t>(this->current_state_.to_ulong()));
 }
 
+void SN74HC164Component::loop() {
+  // Continuously write the current state to maintain output stability
+  this->shift_out(static_cast<uint8_t>(this->current_state_.to_ulong()));
+}
+
 }  // namespace sn74hc164
 }  // namespace esphome
