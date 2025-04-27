@@ -51,7 +51,10 @@ namespace esphome
       void set_pin(uint16_t pin) { pin_ = pin; }
       void set_inverted(bool inverted) { inverted_ = inverted; }
 
-      gpio::Flags get_flags() const override { return gpio::Flags::FLAG_OUTPUT; }
+      esphome::gpio::Flags get_flags() const override
+      {
+        return esphome::gpio::Flags::FLAG_OUTPUT;
+      }
 
     protected:
       uint16_t pin_;
