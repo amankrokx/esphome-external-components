@@ -1,81 +1,18 @@
-esphome:
-  name: sn74hc164_example
-  platform: ESP32
-  board: esp32dev
-
-external_components:
-  - source:
-      type: local
-      path: esphome/components/sn74hc164
-
-# Define the SN74HC164 component
+# Example configuration entry
 sn74hc164:
-  - id: my_shift_register
-    data_pin: GPIO16
-    clock_pin: GPIO04
-
-# Define 8 lights connected to the SN74HC164 outputs
-light:
-  - platform: binary
-    name: "SN74HC164 Light 1"
-    output: sn74hc164_output_1
-  - platform: binary
-    name: "SN74HC164 Light 2"
-    output: sn74hc164_output_2
-  - platform: binary
-    name: "SN74HC164 Light 3"
-    output: sn74hc164_output_3
-  - platform: binary
-    name: "SN74HC164 Light 4"
-    output: sn74hc164_output_4
-  - platform: binary
-    name: "SN74HC164 Light 5"
-    output: sn74hc164_output_5
-  - platform: binary
-    name: "SN74HC164 Light 6"
-    output: sn74hc164_output_6
-  - platform: binary
-    name: "SN74HC164 Light 7"
-    output: sn74hc164_output_7
-  - platform: binary
-    name: "SN74HC164 Light 8"
-    output: sn74hc164_output_8
-
-# Example usage: controlling individual outputs
-output:
-  - platform: custom
-    type: binary
-    lambda: |-
-      auto sn74hc164 = id(my_shift_register);
-      std::vector<esphome::output::BinaryOutput*> outputs;
-      for (int i = 0; i < 8; i++) {
-        outputs.push_back(new esphome::sn74hc164::SN74HC164BinaryOutput(sn74hc164, i));
-      }
-      return outputs;
-    outputs:
-      - id: sn74hc164_output_1
-      - id: sn74hc164_output_2
-      - id: sn74hc164_output_3
-      - id: sn74hc164_output_4
-      - id: sn74hc164_output_5
-      - id: sn74hc164_output_6
-      - id: sn74hc164_output_7
-      - id: sn74hc164_output_8
-
-# Add a debug switch to write all 1s to the shift register
-output:
-  - platform: custom
-    type: binary
-    lambda: |-
-      auto sn74hc164 = id(my_shift_register);
-      std::vector<esphome::output::BinaryOutput*> outputs;
-      outputs.push_back(new esphome::sn74hc164::SN74HC164BinaryOutput(sn74hc164, 0));
-      return outputs;
-    outputs:
-      - id: sn74hc164_debug_output
+  clock_pin: D5
+  a_pin: D7
+  b_pin: D6
+  reset_pin: D4
+  sr_count: 2  # Number of chained chips
 
 switch:
-  - platform: output
-    name: "SN74HC164 Debug Switch"
-    output: sn74hc164_debug_output
-
+  - platform: sn74hc164
+    id: led1
+    name: "LED 1"
+    pin: 0
+  - platform: sn74hc164
+    id: led2
+    name: "LED 2"
+    pin: 1
+    # ... up to 15 pins for 2 chips

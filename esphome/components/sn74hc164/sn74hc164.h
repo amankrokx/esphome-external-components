@@ -1,50 +1,62 @@
 #pragma once
 
 #include "esphome/core/component.h"
-#include "esphome/core/defines.h"
 #include "esphome/core/hal.h"
 #include "esphome/core/helpers.h"
-#include "esphome/components/output/binary_output.h"
-
 #include <vector>
-#include <bitset>
 
-namespace esphome {
-namespace sn74hc164 {
+namespace esphome
+{
+  namespace sn74hc164
+  {
 
-class SN74HC164Component : public Component {
- public:
-  SN74HC164Component() = default;
+    class SN74HC164Component : public Component
+    {
+    public:
+      void set_clock_pin(GPIOPin *pin) { clock_pin_ = pin; }
+      void set_a_pin(GPIOPin *pin) { a_pin_ = pin; }
+      void set_b_pin(GPIOPin *pin) { b_pin_ = pin; }
+      void set_reset_pin(GPIOPin *pin) { reset_pin_ = pin; }
+      void set_sr_count(uint8_t count)
+      {
+        sr_count_ = count;
+        output_bytes_.resize(count);
+      }
 
-  void setup() override;
-  void loop() override;
-  float get_setup_priority() const override;
-  void dump_config() override;
+      float get_setup_priority() const override { return setup_priority::IO; }
+      void setup() override;
+      void dump_config() override;
 
-  void set_data_pin(GPIOPin *pin) { this->data_pin_ = pin; }
-  void set_clock_pin(GPIOPin *pin) { this->clock_pin_ = pin; }
+      void digital_write(uint16_t pin, bool value);
+      void write_gpio();
 
-  void shift_out(uint8_t value);
-  void set_output_state(uint8_t pin, bool state);
+    protected:
+      GPIOPin *clock_pin_;
+      GPIOPin *a_pin_;
+      GPIOPin *b_pin_;
+      GPIOPin *reset_pin_;
+      uint8_t sr_count_;
+      std::vector<uint8_t> output_bytes_;
+    };
 
- private:
-  GPIOPin *data_pin_;
-  GPIOPin *clock_pin_;
-  std::bitset<8> current_state_;
-};
+    class SN74HC164GPIOPin : public GPIOPin, public Parented<SN74HC164Component>
+    {
+    public:
+      void setup() override {}
+      void pin_mode(gpio::Flags flags) override {}
+      bool digital_read() override { return false; }
+      void digital_write(bool value) override;
+      std::string dump_summary() const override;
 
-class SN74HC164BinaryOutput : public esphome::output::BinaryOutput {
- public:
-  SN74HC164BinaryOutput(SN74HC164Component *parent, uint8_t pin) : parent_(parent), pin_(pin) {}
+      void set_pin(uint16_t pin) { pin_ = pin; }
+      void set_inverted(bool inverted) { inverted_ = inverted; }
 
-  void write_state(bool state) override {
-    this->parent_->set_output_state(this->pin_, state);
-  }
+      gpio::Flags get_flags() const override { return gpio::Flags::FLAG_OUTPUT; }
 
- private:
-  SN74HC164Component *parent_;
-  uint8_t pin_;
-};
+    protected:
+      uint16_t pin_;
+      bool inverted_;
+    };
 
-}  // namespace sn74hc164
-}  // namespace esphome
+  } // namespace sn74hc164
+} // namespace esphome
