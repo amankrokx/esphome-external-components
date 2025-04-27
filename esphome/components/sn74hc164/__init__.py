@@ -4,6 +4,7 @@ import esphome.config_validation as cv
 from esphome.const import (
     CONF_CLOCK_PIN,
     CONF_ID,
+    CONF_INVERTED,
     CONF_NUMBER,
     CONF_OUTPUT,
     CONF_RESET_PIN,
